@@ -13,6 +13,7 @@ var usuarioRoutes = require('./routes/usuario');
 var loginRoutes = require('./routes/login'); 
 var hospitalRoutes = require('./routes/hospital');
 var medicoRoutes = require('./routes/medico');
+var uploadRoutes = require('./routes/upload');
 
 mongoose.connection.openUri('mongodb://localhost:27017/hospitalDB',(err, res)=>
 {
@@ -27,6 +28,7 @@ app.use('/hospital',hospitalRoutes);
 app.use('/usuario',usuarioRoutes);
 app.use('/medico', medicoRoutes);
 app.use('/login',loginRoutes);
+app.use('/upload',uploadRoutes);
 app.use('/',appRoutes);
 
 
