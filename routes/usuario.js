@@ -11,7 +11,13 @@ var middleware = require('../middlewares/autentificacion'); // Autentificacion T
 // ==============================
 app.get('/', (req, res) => {
     // Especificando los campos devueltos
-    Usuario.find({}, 'nombre email img role').exec(
+    var desde = req.query.desde || 0;
+    desde = Number(desde);
+
+    Usuario.find({}, 'nombre email img role')
+    .skip(desde) // Especificamos un salto para iniciar
+    .limit(5)
+    .exec(
         (err, usuarios) => {
             if (err) {
                 return res.status(500).json({
@@ -20,9 +26,12 @@ app.get('/', (req, res) => {
                     errors: err
                 });
             }
-            res.status(200).json({
-                ok: true,
-                usuarios: usuarios
+            Usuario.count({},(err, conteo)=>{ // Paginacion
+                res.status(200).json({
+                    ok: true,
+                    total: conteo, // Total de Usuarios
+                    usuarios: usuarios
+                });
             });
         });
 
