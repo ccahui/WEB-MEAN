@@ -17,7 +17,7 @@ exports.verificaToken = function (req, res, next) {
                 errors: err
             });
         }
-        req.usuario = decoded.usuario; // El usuario Actual de Sesion
+        req.usuario = decoded.usuario; // El usuario Actual de Sesion para utilizarlo en hospital y medico
         next();
 
     });

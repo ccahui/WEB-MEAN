@@ -30,7 +30,7 @@ var usuarioSchema = new Schema({
         default: 'USER_ROLE',
         enum: rolesValidos // Roles Validos
     }
-});
+}, {collection: 'usuarios'}); // Moongose trabaja similar a Laravel, por defecto crea un plural el modelo pero este es en Ingles, NOSOTROS especificamos el nombre de la collection
 
 usuarioSchema.plugin(uniqueValidator, {
     message: '{PATH} debe ser UNICO'

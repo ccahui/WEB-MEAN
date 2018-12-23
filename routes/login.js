@@ -5,7 +5,6 @@ var SEED = require('../configuraciones/config').SEED; // Esta es mi clave para e
 
 var Usuario = require('../modelos/usuario'); // Schema Usuario
 
-
 var app = express();
 
 
@@ -43,7 +42,7 @@ app.post('/', (req, res, next) => {
         }
         // Crear Token
         usuarioDB.password = ':)';
-        var token = jwt.sign({
+        var token = jwt.sign({  // Inicia sesion y los datos son almacenados 
             usuario: usuarioDB
         }, SEED, {
             expiresIn: 14400
