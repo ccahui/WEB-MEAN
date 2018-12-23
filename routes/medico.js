@@ -10,7 +10,10 @@ var middleware = require('../middlewares/autentificacion'); // Autentificacion T
 // ==============================
 app.get('/', (req, res) => {
     // Especificando los campos devueltos
-    Medico.find({}, (err, medicos) => {
+    Medico.find({})
+    .populate('usuario','nombre email') // Campos de Usuario que debemos especificar
+    .populate('hospital')
+    .exec((err, medicos) => {
         if (err) {
             return res.status(500).json({
                 ok: false,
@@ -83,6 +86,7 @@ app.put('/:id', middleware.verificaToken, (req, res) => {
         }
 
         medicoBuscado.nombre = body.nombre;
+        medicoBuscado.usuario = req.usuario._id;
         
         medicoBuscado.save((err, medicoGuardado) => {
             if (err) {

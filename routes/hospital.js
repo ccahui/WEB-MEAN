@@ -8,11 +8,13 @@ var middleware = require('../middlewares/autentificacion');
 // Obtener todos los Hospitales
 // ==============================
 app.get('/', (req, res) => {
-    Hospital.find({}, (err, hospitales) => {
+    Hospital.find({})
+    .populate('usuario','nombre email') // Campos de Usuario que debemos especificar
+    .exec((err, hospitales) => {
         if (err) {
             return res.status(500).json({
                 ok: false,
-                mensaje: 'Error cargando Usuarios',
+                mensaje: 'Error cargando Hospitales',
                 errors: err
             });
         }
@@ -78,6 +80,7 @@ app.put('/:id', middleware.verificaToken, (req, res) => {
         }
 
         hospitalBuscado.nombre = body.nombre;
+        hospitalBuscado.usuario = req.usuario._id;
 
         hospitalBuscado.save((err, hospitalGuardado) => {
             if (err) {
