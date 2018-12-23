@@ -1,6 +1,11 @@
 var moongose = require('mongoose');
 var Schema = moongose.Schema;
+var uniqueValidator = require('mongoose-unique-validator'); // npm install para mensaje de validacion de tipo UNique
 
+var rolesValidos = {
+    values: ['ADMIN_ROLE', 'USER_ROLE'],
+    message: '{VALUE} no es un rol permitido' // Usando npm install el plugin
+}
 var usuarioSchema = new Schema({
     nombre: {
         type: String,
@@ -22,8 +27,13 @@ var usuarioSchema = new Schema({
     role: {
         type: String,
         required: true,
-        default: 'USER_ROLE'
+        default: 'USER_ROLE',
+        enum: rolesValidos // Roles Validos
     }
 });
 
-module.exports = moongose.model('Usuario',usuarioSchema);
+usuarioSchema.plugin(uniqueValidator, {
+    message: '{PATH} debe ser UNICO'
+});
+
+module.exports = moongose.model('Usuario', usuarioSchema);

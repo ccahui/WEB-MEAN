@@ -1,40 +1,144 @@
 var express = require('express');
 var app = express();
 var Usuario = require('../modelos/usuario'); // Schema Usuario
+var bcrypt = require('bcryptjs'); // npm install para las contraseñas
+
+var middleware = require('../middlewares/autentificacion'); // Autentificacion TOKEN
+
 
 // ==============================
 // Obtener todos los Usuarios
 // ==============================
-app.get('/', (req, res, next) => {
+app.get('/', (req, res) => {
     // Especificando los campos devueltos
     Usuario.find({}, 'nombre email img role').exec(
         (err, usuarios) => {
             if (err) {
                 return res.status(500).json({
-                    ok: 'false',
+                    ok: false,
                     mensaje: 'Error cargando Usuarios',
                     errors: err
                 });
             }
             res.status(200).json({
-                ok: 'true',
+                ok: true,
                 usuarios: usuarios
             });
         });
 
 });
 
+
 // ==============================
 // Crear Nuevo Usuario
 // ==============================
-app.post('/', (req, res)=> {
-    var usuario = req.body;
-    res.status(200).json({
-        ok: 'true',
-        usuario
+app.post('/', middleware.verificaToken, (req, res) => {
+    var body = req.body;
+
+    var usuario = new Usuario({
+        nombre: body.nombre,
+        email: body.email,
+        password: bcrypt.hashSync(body.password), // Bcrypt para la contraseña
+        img: body.img,
+        role: body.role
     });
 
+    usuario.save((err, usuarioGuardado) => {
+        if (err) {
+            return res.status(400).json({
+                ok: false,
+                mensaje: 'Error guardando Usuarios',
+                errors: err
+            });
+        }
+        res.status(200).json({
+            ok: true,
+            usuario: usuarioGuardado,
+            usuarioToken: req.usuario
+        });
+
+    });
 
 });
+
+// ==============================
+// Actualizar Usuario
+// ==============================
+app.put('/:id', middleware.verificaToken, (req, res) => {
+    var id = req.params.id;
+    var body = req.body;
+    Usuario.findById(id, (err, usuarioBuscado) => {
+        if (err) {
+            return res.status(500).json({
+                ok: false,
+                mensaje: "Error al buscar Usuario"
+            });
+        }
+        if (!usuarioBuscado) {
+            return res.status(400).json({
+                ok: false,
+                mensaje: 'El usuario con el id ' + id + ' no existe',
+                errors: {
+                    messaje: 'No existe un usuario con ese ID'
+                }
+
+            });
+        }
+
+        usuarioBuscado.nombre = body.nombre;
+        usuarioBuscado.email = body.email;
+        usuarioBuscado.role = body.role;
+
+        usuarioBuscado.save((err, usuarioGuardado) => {
+            if (err) {
+                return res.status(400).json({
+                    ok: false,
+                    mensaje: 'Error al actualizar Usuario',
+                    errors: err
+                });
+            }
+            usuarioBuscado.password = ':)'; // Esto no se esta guardando con SAVE
+            res.status(200).json({
+                ok: true,
+                usuario: usuarioGuardado
+            });
+
+        });
+    });
+});
+
+// ==============================
+// Eliminar Usuario
+// ==============================
+app.delete('/:id', middleware.verificaToken, (req, res) => {
+    var id = req.params.id;
+
+    Usuario.findByIdAndRemove(id, (err, usuarioBorrado) => {
+        if (err) {
+            return res.status(500).json({
+                ok: false,
+                mensaje: 'Error al borrar Usuario',
+                errors: err
+            });
+        }
+        if (!usuarioBorrado) {
+            return res.status(400).json({
+                ok: false,
+                mensaje: 'No existe un Usuario con ese ID',
+                errors: {
+                    messaje: 'No existe un Usuario con ese ID'
+                }
+            });
+        }
+
+        res.status(200).json({
+            ok: true,
+            usuario: usuarioBorrado
+        });
+
+    });
+
+});
+
 
 module.exports = app;
