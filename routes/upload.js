@@ -75,6 +75,23 @@ function subirPorTipo(tipo, id, nombreArchivo, res) {
 
     if (tipo === 'usuarios') {
         Usuario.findById(id, (err, usuario) => {
+            if (err) {
+                return res.status(500).json({
+                    ok: false,
+                    mensaje: "Error al buscar Usuario"
+                });
+            }
+            if (!usuario) {
+                return res.status(400).json({
+                    ok: false,
+                    mensaje: 'El usuario con el id ' + id + ' no existe',
+                    errors: {
+                        messaje: 'No existe un usuario con ese ID'
+                    }
+
+                });
+            }
+
             var pathViejo = './uploads/usuarios/' + usuario.img; // Puede ser NULL ?
             // Si existe elimina la imagen anterior
             if (fs.existsSync(pathViejo)) {
@@ -101,6 +118,25 @@ function subirPorTipo(tipo, id, nombreArchivo, res) {
     }
     if (tipo == 'hospitales') {
         Hospital.findById(id, (err, hospital) => {
+            
+            if (err) {
+                return res.status(500).json({
+                    ok: false,
+                    mensaje: "Error al buscar Hospitales"
+                });
+            }
+            if (!hospital) {
+                return res.status(400).json({
+                    ok: false,
+                    mensaje: 'El hospital con el id ' + id + ' no existe',
+                    errors: {
+                        messaje: 'No existe un hopital con ese ID'
+                    }
+
+                });
+            }
+            
+            
             var pathViejo = './uploads/hospitales/' + hospital.img; // Puede ser NULL ?
             // Si existe elimina la imagen anterior
             if (fs.existsSync(pathViejo)) {
@@ -123,10 +159,30 @@ function subirPorTipo(tipo, id, nombreArchivo, res) {
             });
         });
     }
-    
+
     if (tipo == 'medicos') {
+
         Medico.findById(id, (err, medico) => {
-            var pathViejo = './uploads/medicos/'+medico.img; // Puede ser NULL ?
+        
+            if (err) {
+                return res.status(500).json({
+                    ok: false,
+                    mensaje: "Error al buscar Medico"
+                });
+            }
+            if (!medico) {
+                return res.status(400).json({
+                    ok: false,
+                    mensaje: 'El Medico con el id ' + id + ' no existe',
+                    errors: {
+                        messaje: 'No existe un Medico con ese ID'
+                    }
+
+                });
+            }
+        
+        
+            var pathViejo = './uploads/medicos/' + medico.img; // Puede ser NULL ?
             // Si existe elimina la imagen anterior
             if (fs.existsSync(pathViejo)) {
                 fs.unlink(pathViejo);
