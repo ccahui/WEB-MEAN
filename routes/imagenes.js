@@ -10,16 +10,12 @@ app.get('/:tipo/:img', (req, res, next) => {
 
     var path = `./uploads/${tipo}/${img}`;
     fs.exists(path, existe => {
-        if(!existe){
+        if (!existe) {
             path = './assets/no-image.png';
-        }/*
-        res.status(200).json({
-            hola:"hola",
-            path
-        });*/
-         res.sendfile(path);
+        }
+        res.sendfile(path);
     });
-    
+
 });
 
 module.exports = app;
