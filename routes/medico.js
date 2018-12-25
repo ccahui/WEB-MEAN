@@ -4,10 +4,9 @@ var Medico = require('../modelos/medico'); // Schema Medico
 
 var middleware = require('../middlewares/autentificacion'); // Autentificacion TOKEN
 
-
-// ==============================
-// Obtener todos los Medicos
-// ==============================
+// =======================================
+//  Obtener tods los medicos
+// =======================================
 app.get('/', (req, res) => {
     // Especificando los campos devueltos
     Medico.find({})
