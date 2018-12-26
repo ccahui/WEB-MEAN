@@ -29,6 +29,11 @@ var usuarioSchema = new Schema({
         required: true,
         default: 'USER_ROLE',
         enum: rolesValidos // Roles Validos
+    },
+    google:{
+        type: Boolean,
+        required: true,
+        default: false // Valor por defecto false
     }
 }, {collection: 'usuarios'}); // Moongose trabaja similar a Laravel, por defecto crea un plural el modelo pero este es en Ingles, NOSOTROS especificamos el nombre de la collection
 
