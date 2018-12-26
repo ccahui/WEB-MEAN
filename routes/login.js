@@ -4,10 +4,50 @@ var jwt = require('jsonwebtoken'); // npm install token
 var SEED = require('../configuraciones/config').SEED; // Esta es mi clave para el TOKEN
 
 var Usuario = require('../modelos/usuario'); // Schema Usuario
+// Google
+const CLIENT_ID = require('../configuraciones/config').CLIENT_ID;
+const CLIENT_SECRET = require('../configuraciones/config').CLIENT_SECRET;
+
+const {
+    OAuth2Client
+} = require('google-auth-library');
+const client = new OAuth2Client(CLIENT_ID);
 
 var app = express();
 
+// ========================
+//  Autenticación de Google
+// ========================
+app.post('/google', (req, res) => {
 
+    var token = req.body.token;
+    console.log(req.body.token);
+    async function verify() {
+        const ticket = await client.verifyIdToken({
+            idToken: token,
+            audience: CLIENT_ID, // Specify the CLIENT_ID of the app that accesses the backend
+            // Or, if multiple clients access the backend:
+            //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
+        });
+        const payload = ticket.getPayload();
+        const userid = payload['sub'];
+        // If request specified a G Suite domain:
+        //const domain = payload['hd'];
+        res.status(200).json({
+            mensaje: "hola"
+        });
+    }
+    verify().catch((error) => {
+        res.status(400).json({
+            error: 'error de token'
+        });
+    });
+
+});
+
+// ========================
+// Autenticación Normal
+// ========================
 app.post('/', (req, res, next) => {
 
     var body = req.body;
@@ -42,7 +82,7 @@ app.post('/', (req, res, next) => {
         }
         // Crear Token
         usuarioDB.password = ':)';
-        var token = jwt.sign({  // Inicia sesion y los datos son almacenados 
+        var token = jwt.sign({ // Inicia sesion y los datos son almacenados 
             usuario: usuarioDB
         }, SEED, {
             expiresIn: 14400

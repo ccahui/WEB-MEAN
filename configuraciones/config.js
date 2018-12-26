@@ -8,3 +8,6 @@ mongoose.connect(URI,{ useNewUrlParser: true }) // Una nueva caracteristica de m
 
 module.exports.DATA_BASE = mongoose;
 module.exports.SEED = 'esta-es-mi-clave';
+// Google
+module.exports.CLIENT_ID ='274424266167-6urlvebi95c6n9v4tsm11a62140a94ei.apps.googleusercontent.com';
+module.exports.CLIENT_SECRET = 'Nk5OP6l4pDtvpWxvJcmxVHO1';
